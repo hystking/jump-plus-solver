@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Jump Plus Solver</title>
+  </head>
+  <body>
+    <div>
+    <input type="file" id="input">
+    </div>
+    <div>
+    <canvas id="output" style="border: solid 1px #000;"></canvas>
+    </div>
+  </body>
+  <script>
+    var DIVIDE_NUM = 4;
+    var MULTIPLE = 8;
+    function solve(width,height,output,img){
+      var cell_width=Math.floor(width/(DIVIDE_NUM*MULTIPLE))*MULTIPLE;
+      var cell_height=Math.floor(height/(DIVIDE_NUM*MULTIPLE))*MULTIPLE;
+      drawImage(0,0,width,height,0,0,output,img);
+      for(var e=0;e<DIVIDE_NUM*DIVIDE_NUM;e++){
+        var t=Math.floor(e/DIVIDE_NUM)*cell_height,
+          n=e%DIVIDE_NUM*cell_width,
+          r=Math.floor(e/DIVIDE_NUM),
+          i=e%DIVIDE_NUM*DIVIDE_NUM+r,
+          o=i%DIVIDE_NUM*cell_width,
+          s=Math.floor(i/DIVIDE_NUM)*cell_height;
+        drawImage(n,t,cell_width,cell_height,o,s,output,img)
+      }
+    }
+    function drawImage(e,t,n,r,i,o,output,img){
+    var s=output.getContext("2d");
+    s.mozImageSmoothingEnabled=!1,
+      s.webkitImageSmoothingEnabled=!1,
+      s.msImageSmoothingEnabled=!1,
+      s.imageSmoothingEnabled=!1,
+        s.drawImage(img,e,t,n,r,i,o,n,r)
+    }
+    function imageLoaded(e) {
+      var img = e.target;
+      var width = img.naturalWidth;
+      var height = img.naturalHeight;
+      output.setAttribute("width", width);
+      output.setAttribute("height", height);
+      solve(width, height, output, img);
+    }
+    function createImage(e) {
+      img = new Image();
+      img.onload = imageLoaded;
+      img.src = e.target.result;
+    }
+    input.addEventListener("change", function () {
+      var file = input.files[0];
+      var fr = new FileReader();
+      fr.onload = createImage;   // onload fires after reading is complete
+      fr.readAsDataURL(file);    // begin reading
+    });
+  </script>
+</html>
